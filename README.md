@@ -1,2 +1,2 @@
-# nxreplicator_common
+# nxReplicatorCommon
 Common definitions for custom "Bulk Downloader"
