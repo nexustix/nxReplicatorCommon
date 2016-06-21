@@ -15,8 +15,8 @@ type ProviderEntry struct {
 }
 
 type ProviderList struct {
-	dir       string
-	filename  string
+	Dir       string
+	Filename  string
 	Providers []ProviderEntry
 }
 
@@ -39,7 +39,9 @@ func (p *ProviderList) GetEntry(providerID string) ProviderEntry {
 }
 
 func (p *ProviderList) AddEntry(providerID, providerPath string) {
-	p.Providers = append(p.Providers, ProviderEntry{ID: providerID, Path: providerPath})
+	if !p.HasEntry(providerID) {
+		p.Providers = append(p.Providers, ProviderEntry{ID: providerID, Path: providerPath})
+	}
 
 }
 
@@ -54,18 +56,21 @@ func (p *ProviderList) RemoveEntry(providerID string) {
 }
 
 func (p *ProviderList) LoadEntries() {
-	dat, err := ioutil.ReadFile(path.Join(p.dir, p.filename))
-	bp.FailError(err)
-	//Boilerplate.FailError(err)
-	tmpProviderList := ProviderList{}
+	dat, err := ioutil.ReadFile(path.Join(p.Dir, p.Filename))
+	//FIXME fails silently
+	if !bp.GotError(err) {
+		//bp.FailError(err)
+		//Boilerplate.FailError(err)
+		tmpProviderList := ProviderList{}
 
-	json.Unmarshal(dat, tmpProviderList)
+		json.Unmarshal(dat, &tmpProviderList)
 
-	p.Providers = tmpProviderList.Providers
+		p.Providers = tmpProviderList.Providers
+	}
 }
 
 func (p *ProviderList) SaveEntries() {
-	filePath := path.Join(p.dir, p.filename)
+	filePath := path.Join(p.Dir, p.Filename)
 	//if bp.FileExists(filePath) {
 	outFile, err := os.Create(filePath)
 	bp.FailError(err)
