@@ -47,7 +47,7 @@ func (am *AtomManager) GetEntry(provider, atomID string) Atom {
 
 		tmpAtom := Atom{}
 
-		json.Unmarshal(dat, tmpAtom)
+		json.Unmarshal(dat, &tmpAtom)
 
 		return tmpAtom
 
