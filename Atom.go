@@ -16,15 +16,17 @@ type Atom struct {
 	Filename     string   // Filename to save Atom as
 	URL          string   // URL use depens on Provider used (Download URL ?)
 	RelativePath string   // Relative path to download location //TODO exploitable be aware of "../"
+	Groups       []string // Groups for cataloging (hashtag-style since trees are evil)
+
 	Priority     int      // TBD
 	DoDepCheck   bool     // do a check for dependencies
-	Groups       []string // Groups for cataloging (hashtag-style since trees are evil)
+	Dependencies []string // Atom dependencies
 }
 
 // URL encoded string seperated by spaces followed by a Pipe and all Grops seperated by spaces
 // <Provider> <Name> <ID> <Filename> <URL> <RelativePath>|<Group1> <Group2> <Group3>...
 
-func StringToAtom(stringAtom string) Atom {
+func StringToAtom(stringAtom string, depCheck bool) Atom {
 
 	var decodedAtomData []string
 
@@ -59,19 +61,21 @@ func StringToAtom(stringAtom string) Atom {
 		Filename:     bp.StringAtIndex(3, decodedAtomData),
 		URL:          bp.StringAtIndex(4, decodedAtomData),
 		RelativePath: bp.StringAtIndex(5, decodedAtomData),
-		Groups:       atomGroups}
+		Groups:       atomGroups,
+		DoDepCheck:   depCheck}
 
 }
 
-func OutputToAtoms(stringAtoms string) []Atom {
+func OutputToAtoms(stringAtoms string, depCheck bool) []Atom {
 	lines := strings.Split(stringAtoms, "\n")
 	var tmpAtoms []Atom
 	for _, v := range lines {
 		if !strings.HasPrefix(v, "<") && !strings.HasPrefix(v, "#") && v != "" {
 			fmt.Printf("==>%s<\n", v)
-			tmpAtom := StringToAtom(v)
+			tmpAtom := StringToAtom(v, depCheck)
 			if tmpAtom.ID != "" {
-				tmpAtoms = append(tmpAtoms, StringToAtom(v))
+				//tmpAtoms = append(tmpAtoms, StringToAtom(v))
+				tmpAtoms = append(tmpAtoms, tmpAtom)
 			}
 		}
 	}
@@ -82,9 +86,19 @@ func OutputToAtoms(stringAtoms string) []Atom {
 	return tmpAtoms
 }
 
-func OutputToAtomsAndAdd(provider, stringAtoms string, manager *AtomManager) {
-	tmpAtoms := OutputToAtoms(stringAtoms)
+func OutputToAtomsAndAdd(provider, stringAtoms string, manager *AtomManager, depCheck bool) {
+	tmpAtoms := OutputToAtoms(stringAtoms, depCheck)
 	for _, v := range tmpAtoms {
-		manager.SetEntry(provider, v)
+		if !manager.HasEntry(provider, v.ID) {
+			manager.SetEntry(provider, v)
+		}
+
+		//AddAtom(provider, v, manager)
 	}
 }
+
+/*
+func AddAtom(provider string, atom Atom, manager *AtomManager) {
+	manager.SetEntry(provider, atom)
+}
+*/
