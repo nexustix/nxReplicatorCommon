@@ -13,6 +13,7 @@ import (
 //Entry => a file
 //Atom => thing with a specific ID
 
+//AtomManager represents a way to acess and manage existing atoms
 type AtomManager struct {
 	Index      []string // index of Atom IDs for easy searching
 	WorkingDir string   //
@@ -26,8 +27,9 @@ func (am *AtomManager) HasAtom(atomID string) bool {
 }
 */
 
+//HasEntry checks if an atom of a given ID exists
 func (am *AtomManager) HasEntry(provider, atomID string) bool {
-	filePath := path.Join(am.WorkingDir, provider+"_"+atomID)
+	filePath := path.Join(am.WorkingDir, provider+"_"+atomID+".nxra")
 	return bp.FileExists(filePath)
 	//return false
 }
@@ -38,8 +40,9 @@ func (am *AtomManager) GetAtom(atomID string) NxAtom {
 }
 */
 
+//GetEntry returns atom of a given ID (or empty atom if none found)
 func (am *AtomManager) GetEntry(provider, atomID string) Atom {
-	filePath := path.Join(am.WorkingDir, provider+"_"+atomID)
+	filePath := path.Join(am.WorkingDir, provider+"_"+atomID+".nxra")
 
 	if bp.FileExists(filePath) {
 		dat, err := ioutil.ReadFile(filePath)
@@ -52,7 +55,7 @@ func (am *AtomManager) GetEntry(provider, atomID string) Atom {
 		return tmpAtom
 
 	}
-	fmt.Printf("<!> ERROR entry >%s< not known\n", provider+"_"+atomID)
+	fmt.Printf("<!> ERROR entry >%s< not known\n", provider+"_"+atomID+".nxra")
 	return Atom{}
 }
 
@@ -66,8 +69,9 @@ func (am *AtomManager) AddAtom(atom NxAtom) {
 }
 */
 
+//SetEntry sets Atom for a given ID
 func (am *AtomManager) SetEntry(provider string, atom Atom) {
-	filePath := path.Join(am.WorkingDir, provider+"_"+atom.ID)
+	filePath := path.Join(am.WorkingDir, provider+"_"+atom.ID+".nxra")
 
 	//if bp.FileExists(filePath) {
 	outFile, err := os.Create(filePath)
