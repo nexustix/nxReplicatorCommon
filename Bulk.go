@@ -27,6 +27,11 @@ func (b *Bulk) AddDownload(download bp.Download) {
 */
 
 func (b *Bulk) AddDownload(bulkItem BulkItem) {
+	for _, v := range b.BulkItems {
+		if v.Download.Filename == bulkItem.Download.Filename {
+			return
+		}
+	}
 	b.BulkItems = append(b.BulkItems, bulkItem)
 }
 

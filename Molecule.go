@@ -26,6 +26,11 @@ type Molecule struct {
 
 //AddItem adds item to molecule
 func (m *Molecule) AddItem(moleculeItem MoleculeItem) {
+	for _, v := range m.MoleculeItems {
+		if v.AtomID == moleculeItem.AtomID {
+			return
+		}
+	}
 	m.MoleculeItems = append(m.MoleculeItems, moleculeItem)
 }
 
