@@ -50,7 +50,7 @@ func StringToAtom(stringAtom string, depCheck bool) Atom {
 	}
 
 	for _, v := range decodedAtomData {
-		fmt.Printf(">%s<\n", v)
+		fmt.Printf("<D> SEGMENT >%s<\n", v)
 	}
 	fmt.Printf("---\n")
 
@@ -69,9 +69,12 @@ func StringToAtom(stringAtom string, depCheck bool) Atom {
 func OutputToAtoms(stringAtoms string, depCheck bool) []Atom {
 	lines := strings.Split(stringAtoms, "\n")
 	var tmpAtoms []Atom
+
+	fmt.Printf("<D> NRC Start\n")
+
 	for _, v := range lines {
 		if !strings.HasPrefix(v, "<") && !strings.HasPrefix(v, "#") && v != "" {
-			fmt.Printf("==>%s<\n", v)
+			fmt.Printf("<D> DATA >%s<\n", v)
 			tmpAtom := StringToAtom(v, depCheck)
 			if tmpAtom.ID != "" {
 				//tmpAtoms = append(tmpAtoms, StringToAtom(v))
@@ -80,13 +83,15 @@ func OutputToAtoms(stringAtoms string, depCheck bool) []Atom {
 		}
 	}
 	for _, v := range tmpAtoms {
-		fmt.Printf(">>%s|\n", v.ID)
+		fmt.Printf("<D> ATOM >%s<\n", v.ID)
 	}
+
+	fmt.Printf("<D> NRC End\n")
 
 	return tmpAtoms
 }
 
-func OutputToAtomsAndAdd(provider, stringAtoms string, manager *AtomManager, depCheck bool) {
+func OutputToAtomsAndAdd(provider, stringAtoms string, manager *AtomManager, depCheck bool) []Atom {
 	tmpAtoms := OutputToAtoms(stringAtoms, depCheck)
 	for _, v := range tmpAtoms {
 		if !manager.HasEntry(provider, v.ID) {
@@ -95,6 +100,7 @@ func OutputToAtomsAndAdd(provider, stringAtoms string, manager *AtomManager, dep
 
 		//AddAtom(provider, v, manager)
 	}
+	return tmpAtoms
 }
 
 /*
