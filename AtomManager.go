@@ -76,7 +76,8 @@ func (am *AtomManager) SetEntry(provider string, atom Atom) {
 	//if bp.FileExists(filePath) {
 	outFile, err := os.Create(filePath)
 	bp.FailError(err)
-	tmpJSON, _ := json.Marshal(atom)
+	//tmpJSON, _ := json.Marshal(atom)
+	tmpJSON, _ := json.MarshalIndent(atom, "", "    ")
 	outFile.Write(tmpJSON)
 	outFile.Close()
 }

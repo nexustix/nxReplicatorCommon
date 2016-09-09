@@ -74,7 +74,8 @@ func (p *ProviderList) SaveEntries() {
 	//if bp.FileExists(filePath) {
 	outFile, err := os.Create(filePath)
 	bp.FailError(err)
-	tmpJSON, _ := json.Marshal(p)
+	//tmpJSON, _ := json.Marshal(p)
+	tmpJSON, _ := json.MarshalIndent(p, "", "    ")
 	outFile.Write(tmpJSON)
 	outFile.Close()
 }

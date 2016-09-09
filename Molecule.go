@@ -87,7 +87,8 @@ func (m *Molecule) SaveToFile(filePath string) {
 	//if bp.FileExists(filePath) {
 	outFile, err := os.Create(filePath)
 	bp.FailError(err)
-	tmpJSON, _ := json.Marshal(m)
+	//tmpJSON, _ := json.Marshal(m)
+	tmpJSON, _ := json.MarshalIndent(m, "", "    ")
 	outFile.Write(tmpJSON)
 	outFile.Close()
 	//}
